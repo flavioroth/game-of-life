@@ -18,12 +18,12 @@ AlwaysBreakTemplateDeclarations: Yes
 BreakBeforeBraces: Custom
 BraceWrapping:
   AfterCaseLabel: false
-  AfterClass: true
+  AfterClass: false
   AfterControlStatement: Never
-  AfterEnum: true
-  AfterFunction: true
+  AfterEnum: false
+  AfterFunction: false
   AfterNamespace: false
-  AfterUnion: true
+  AfterUnion: false
   BeforeCatch: false
   BeforeElse: false
   IndentBraces: false
@@ -31,7 +31,7 @@ BraceWrapping:
   SplitEmptyRecord: true
 BreakBeforeBinaryOperators: None
 BreakBeforeTernaryOperators: true
-BreakConstructorInitializers: BeforeColon
+BreakConstructorInitializers: BeforeComma
 BreakInheritanceList: BeforeColon
 ColumnLimit: 120
 CompactNamespaces: false
@@ -41,7 +41,7 @@ IndentPPDirectives: None
 IndentWidth: 4
 KeepEmptyLinesAtTheStartOfBlocks: true
 MaxEmptyLinesToKeep: 1
-NamespaceIndentation: All
+NamespaceIndentation: None
 ObjCSpaceAfterProperty: false
 ObjCSpaceBeforeProtocolList: true
 PointerAlignment: Left
@@ -66,6 +66,6 @@ TabWidth: 4
 UseTab: ForContinuationAndIndentation
 IncludeBlocks: Preserve
 PenaltyBreakTemplateDeclaration: 0
-Standard: Cpp17
+Standard: Auto
 BinPackArguments: false
 BinPackParameters: false
