@@ -9,5 +9,12 @@ set(CMAKE_CXX_STANDARD 17)
 
 add_subdirectory(imgui)
 
-add_executable(game_of_life main.cpp)
+set(SRCS
+	utils/RollingAverage.hpp
+	utils/FrequencyAverage.hpp
+	utils/RollingBuffer.hpp
+	main.cpp
+)
+
+add_executable(game_of_life ${SRCS})
 target_link_libraries(game_of_life glfw imgui)
