@@ -17,6 +17,8 @@ set(IMGUI_SRCS
 	imstb_rectpack.h
 	imstb_textedit.h
 	imstb_truetype.h
+	gl_loader.hpp
+	gl_loader.cpp
 )
 
 
