@@ -10,6 +10,9 @@ set(CMAKE_CXX_STANDARD 17)
 add_subdirectory(imgui)
 
 set(SRCS
+	engine/GLResource.hpp
+	engine/Program.hpp
+	engine/Shader.hpp
 	utils/RollingAverage.hpp
 	utils/FrequencyAverage.hpp
 	utils/RollingBuffer.hpp
@@ -17,4 +20,4 @@ set(SRCS
 )
 
 add_executable(game_of_life ${SRCS})
-target_link_libraries(game_of_life glfw imgui)
+target_link_libraries(game_of_life glfw imgui GLU)

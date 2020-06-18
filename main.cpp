@@ -1,13 +1,15 @@
 #include "gl_loader.hpp"
+#include <GL/gl3w.h>
+#include <GLFW/glfw3.h>
+
 #include "imgui.h"
 #include "imgui_impl_glfw.h"
 #include "imgui_impl_opengl3.h"
-#include <iostream>
 
-#include <GLFW/glfw3.h>
-
+#include "engine/Program.hpp"
 #include "utils/FrequencyAverage.hpp"
 #include "utils/RollingBuffer.hpp"
+
 
 int main() {
 	if(!glfwInit())
@@ -49,6 +51,7 @@ int main() {
 
 	utils::FrequencyAverage<60, float> fpsCounter;
 	utils::RollingBuffer<60, float> fpsHistory;
+
 
 	// Main loop
 	while(!glfwWindowShouldClose(window)) {
