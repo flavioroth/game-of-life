@@ -4,5 +4,7 @@ project(game_of_life)
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
 set(CMAKE_CXX_STANDARD 17)
 
-add_executable(game_of_life main.cpp)
+include(glfw)
 
+add_executable(game_of_life main.cpp)
+target_link_libraries(game_of_life glfw)
