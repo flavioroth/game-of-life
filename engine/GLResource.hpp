@@ -27,6 +27,7 @@ public:
 		for(GLenum code : errorCodes) {
 			message << "GL error code = " << code
 					<< " message = " << gluErrorString(code)
+					<< " in " << context
 					<< std::endl;
 		}
 		message << std::endl;
