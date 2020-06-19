@@ -28,7 +28,7 @@ public:
 				neighbors += current.at(x + 0, y + 1);
 				neighbors += current.at(x + 1, y + 1);
 
-				if(cellValue == 1 && neighbors > 3 || neighbors < 2) {
+				if(cellValue == 1 && (neighbors > 3 || neighbors < 2)) {
 					next.at(x, y) = 0;
 				} else if (cellValue == 0 && neighbors == 3) {
 					next.at(x, y) = 1;
