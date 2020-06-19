@@ -71,7 +71,7 @@ int main() {
 		void main() {
 			vec4 vertex = vec4(data[gl_VertexID], 0.0, 1.0);
 			vUV = vec2(1.0, -1.0) * (vertex.xy * 0.5 + 0.5);
-			gl_Position = uProjMatrix * vertex;
+			gl_Position = vertex;
 		});
 
 	const char* frag_src = LITERAL_GLSL(
@@ -82,7 +82,8 @@ int main() {
 		layout(location = 2) uniform sampler2D uFrameBuffer;
 		out vec4 fragColor;
 		void main() {
-			vec4 color = texture2D(uFrameBuffer, vUV);
+
+			vec4 color = texture2D(uFrameBuffer, vUV * 1.0);
 			float luminance = min(1.0, color.r * 255.0);
 			fragColor = vec4(luminance, luminance, luminance, 1.0);
 		});
