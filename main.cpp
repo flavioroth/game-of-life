@@ -55,7 +55,7 @@ int main() {
 
 	ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 
-	utils::FrequencyAverage<60, float> fpsCounter;
+	utils::FrequencyAverage<5, float> fpsCounter;
 	utils::RollingBuffer<60, float> fpsHistory;
 
 	auto frag = gl::Shader::make(GL_FRAGMENT_SHADER);

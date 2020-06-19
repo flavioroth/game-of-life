@@ -24,12 +24,12 @@ public:
 		: _previousTimePoint(TClock::now()) {}
 
 	TReal averageFrequencyHz() const {
-		return static_cast<TReal>(std::nano::den) / _averageInterval.currentAverage();
+		return static_cast<double>(std::micro::den) / static_cast<TReal>(_averageInterval.currentAverage());
 	}
 
 	void update() {
 		const auto now = TClock::now();
-		uint64_t elapsed = std::chrono::duration_cast<std::chrono::nanoseconds>(now - _previousTimePoint).count();
+		uint64_t elapsed = std::chrono::duration_cast<std::chrono::microseconds>(now - _previousTimePoint).count();
 		_averageInterval.push(elapsed);
 		_previousTimePoint = now;
 	}
