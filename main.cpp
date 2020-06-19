@@ -116,7 +116,7 @@ int main() {
 	gl::Texture::Ptr texture = gl::Texture::make();
 	texture->setBindTarget(GL_TEXTURE_2D);
 
-	engine::DoubleBuffer<engine::CellMatrix<uint8_t>> cellsBuffer(engine::Size(256, 256));
+	engine::DoubleBuffer<engine::CellMatrix<uint8_t>> cellsBuffer(engine::Size(1024, 1024));
 
 	for(auto& cell : cellsBuffer.first()) {
 		cell = rand() % 2;
