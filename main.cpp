@@ -17,9 +17,39 @@
 
 #define LITERAL_GLSL(...) #__VA_ARGS__
 
+
+struct InputState {
+	bool rightMouseDown = false;
+	std::vector<glm::vec2> mouseDownLocations;
+};
+
+InputState* getInputState(GLFWwindow* window) {
+	return static_cast<InputState*>(glfwGetWindowUserPointer(window));
+}
+
+void mouse_button_callback(GLFWwindow* window, int button, int action, int mods) {
+	if(auto* inputState = getInputState(window)) {
+		inputState->rightMouseDown = (button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_PRESS);
+	}
+}
+
+static void cursor_position_callback(GLFWwindow* window, double xpos, double ypos) {
+	if(auto* inputState = getInputState(window)) {
+		if(inputState->rightMouseDown) {
+			int width;
+			int height;
+			glfwGetFramebufferSize(window, &width, &height);
+			inputState->mouseDownLocations.emplace_back((float) xpos / (float) width, (float) ypos / (float) height);
+		}
+	}
+}
+
 int main() {
 	if(!glfwInit())
 		return 1;
+
+
+
 
 	const char* glsl_version = "#version 150";
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
@@ -29,8 +59,15 @@ int main() {
 	GLFWwindow* window = glfwCreateWindow(1024, 1024, "Game Of Life", NULL, NULL);
 	if(window == NULL)
 		return 1;
+
 	glfwMakeContextCurrent(window);
 	glfwSwapInterval(1);// Enable vsync
+
+	InputState inputState;
+	inputState.mouseDownLocations.reserve(300);
+	glfwSetWindowUserPointer(window, &inputState);
+	glfwSetMouseButtonCallback(window, mouse_button_callback);
+	glfwSetCursorPosCallback(window, cursor_position_callback);
 
 	if(gl_loader::init()) {
 		fprintf(stderr, "Failed to initialize OpenGL loader!\n");
@@ -57,6 +94,7 @@ int main() {
 
 	utils::FrequencyAverage<5, float> fpsCounter;
 	utils::RollingBuffer<60, float> fpsHistory;
+	utils::RollingAverage<uint64_t, float, 16> cellSpeedCounter;
 
 	auto frag = gl::Shader::make(GL_FRAGMENT_SHADER);
 	auto vert = gl::Shader::make(GL_VERTEX_SHADER);
@@ -82,7 +120,6 @@ int main() {
 		layout(location = 2) uniform sampler2D uFrameBuffer;
 		out vec4 fragColor;
 		void main() {
-
 			vec4 color = texture2D(uFrameBuffer, vUV * 1.0);
 			float luminance = min(1.0, color.r * 255.0);
 			fragColor = vec4(luminance, luminance, luminance, 1.0);
@@ -116,7 +153,7 @@ int main() {
 	gl::Texture::Ptr texture = gl::Texture::make();
 	texture->setBindTarget(GL_TEXTURE_2D);
 
-	engine::DoubleBuffer<engine::CellMatrix<uint8_t>> cellsBuffer(engine::Size(1024, 1024));
+	engine::DoubleBuffer<engine::CellMatrix<uint8_t>> cellsBuffer(engine::Size(256, 256));
 
 	for(auto& cell : cellsBuffer.first()) {
 		cell = rand() % 2;
@@ -141,6 +178,13 @@ int main() {
 		// Generally you may always pass all inputs to dear imgui, and hide them from your application based on those two flags.
 		glfwPollEvents();
 
+		for(const glm::vec2& point : inputState.mouseDownLocations) {
+			int32_t cellUnderMouseX = (int32_t) (point.x * (float) cellsBuffer.first().size().width());
+			int32_t cellUnderMouseY = (int32_t) (point.y * (float) cellsBuffer.first().size().height());
+			cellsBuffer.first().at(cellUnderMouseX, cellUnderMouseY) = 1;
+		}
+
+		inputState.mouseDownLocations.clear();
 
 		// adjust the projection matrix to fit the cell matrix
 		int frameWidth = 0;
@@ -158,7 +202,6 @@ int main() {
 			mProjMatrix = glm::ortho(-1.0f, 1.0f, -1.0f / projRatio, 1.0f / projRatio, -1.0f, 1.0f);
 		}
 
-
 		// update projection matrix
 		program->uniformMatrix4f(0, mProjMatrix);
 
@@ -167,8 +210,12 @@ int main() {
 
 
 		// compute the next generation and push the resulting data to the gpu
+		auto start = std::chrono::steady_clock::now();
 		engine::GameOfLife::step(cellsBuffer.first(), cellsBuffer.second());
 		renderer::CellMatrixRenderer::render(cellsBuffer.second(), texture->boundTarget());
+		uint64_t elapsedNanos = std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::steady_clock::now() - start).count();
+		uint64_t cellSpeed = (1000000000llu / elapsedNanos) * cellsBuffer.first().size().area();
+		cellSpeedCounter.push(cellSpeed);
 		cellsBuffer.flip();
 
 		// draw the cell matrix
@@ -200,7 +247,9 @@ int main() {
 		fpsHistory.push(currentFPS);
 
 		ImGui::Begin("Game of life", nullptr);
+		ImGui::Text("Right click to set a cell");
 		ImGui::Text("FPS : %.1f", currentFPS);
+		ImGui::Text("Cell/s : %.0f", cellSpeedCounter.currentAverage());
 		ImGui::PlotHistogram("", fpsHistory.values(), fpsHistory.size(), 0, nullptr, .0f, 120.0f, ImVec2(100, 30));
 		ImGui::End();
 
