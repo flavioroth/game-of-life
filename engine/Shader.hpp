@@ -17,11 +17,11 @@ class Shader : public GLResource {
 public:
 	using Ptr = std::shared_ptr<Shader>;
 
-private:
+public:
 	Shader(GLenum type)
 		: GLResource(glCreateShader(type)) {}
 
-public:
+
 	template <typename ...Args>
 	static Ptr make(Args&& ...args) {
 		return std::make_shared<Shader>(std::forward<Args>(args)...);
@@ -37,8 +37,10 @@ public:
 		return GL_TRUE == isCompiled;
 	}
 
-	void compile() {
+	bool compile() {
 		glCompileShader(id());
+		popErrors("glCompileShader");
+		return isCompiled();
 	}
 
 	void setSource(const std::string& source){

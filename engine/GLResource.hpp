@@ -17,20 +17,16 @@ namespace gl {
 
 class GLException : public std::exception {
 private:
-	const std::vector<GLenum> _errorCodes;
-	const std::string _context;
 	std::string _what;
 
 public:
-	GLException(std::vector<GLenum> errorCodes, std::string context)
-		: _errorCodes(std::move(errorCodes))
-		, _context(std::move(context)) {
+	GLException(const std::vector<GLenum>& errorCodes, std::string context) {
 
 		std::stringstream message;
 		message << errorCodes.size() << " error(s) : " << std::endl;
 		for(GLenum code : errorCodes) {
 			message << "GL error code = " << code
-					<< gluErrorString(code)
+					<< " message = " << gluErrorString(code)
 					<< std::endl;
 		}
 		message << std::endl;
@@ -43,23 +39,24 @@ public:
 	}
 };
 
-static void popErrors(const char* ctx = "") {
-	GLenum err = GL_NO_ERROR;
-	std::vector<GLenum> errorCodes;
-	while((err = glGetError()) != GL_NO_ERROR) {
-		errorCodes.push_back(err);
-	}
-
-	if(!errorCodes.empty()) {
-		throw GLException(errorCodes, ctx);
-	}
-}
 
 class GLResource {
-private:
-	const GLint _id;
+protected:
+	const GLuint _id;
 
 public:
+
+	static void popErrors(const char* ctx = "") {
+		GLenum err = GL_NO_ERROR;
+		std::vector<GLenum> errorCodes;
+		while((err = glGetError()) != GL_NO_ERROR) { errorCodes.push_back(err); }
+
+		if(!errorCodes.empty()) {
+			throw GLException(errorCodes, ctx);
+		}
+	}
+
+
 	GLResource(GLint id)
 		: _id(id) {
 		popErrors(__PRETTY_FUNCTION__);
@@ -68,6 +65,7 @@ public:
 	GLint id() const {
 		return _id;
 	}
+
 };
 
 }// namespace gl
