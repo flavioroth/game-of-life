@@ -26,7 +26,7 @@ int main() {
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
 
 	// Create window with graphics context
-	GLFWwindow* window = glfwCreateWindow(1280, 720, "Dear ImGui GLFW+OpenGL3 example", NULL, NULL);
+	GLFWwindow* window = glfwCreateWindow(1024, 1024, "Game Of Life", NULL, NULL);
 	if(window == NULL)
 		return 1;
 	glfwMakeContextCurrent(window);
