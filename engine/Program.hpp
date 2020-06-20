@@ -75,6 +75,12 @@ public:
 		popErrors("uniformMatrix4f");
 	}
 
+	void uniformMatrix3f(int location, const glm::mat3x3 &mat) {
+		glUniformMatrix3fv(location, 1, GL_FALSE, glm::value_ptr(mat));
+		popErrors("uniformMatrix3f");
+	}
+
+
 	void uniform3f(int location, const glm::vec3& vec) {
 		glUniform3fv(location, 1, glm::value_ptr(vec));
 		popErrors("uniform2f");
