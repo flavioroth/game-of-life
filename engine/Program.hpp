@@ -34,12 +34,8 @@ public:
 		glDeleteProgram(id());
 	}
 
-	bool addShader(Shader::Ptr shader) {
-		if(_shaders.end() == _shaders.find(shader->id())) {
-			_shaders.emplace(shader->id(), shader);
-			return true;
-		}
-		return false;
+	Shader::Ptr addShader(Shader::Ptr shader) {
+		return _shaders.emplace(shader->id(), shader).first->second;
 	}
 
 	bool removeShader(Shader::Ptr shader) {
@@ -89,6 +85,11 @@ public:
 	void uniform2f(int location, const glm::vec2& vec) {
 		glUniform2fv(location, 1, glm::value_ptr(vec));
 		popErrors("uniform2f");
+	}
+
+	void uniform2u(int location, const glm::uvec2& vec) {
+		glUniform2uiv(location, 1, glm::value_ptr(vec));
+		popErrors("glUniform2uiv");
 	}
 
 	void uniform1f(int location, GLfloat val) {

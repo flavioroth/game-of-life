@@ -52,7 +52,10 @@ public:
 		return _format;
 	}
 
-	void setBindTarget(GLenum target) {
+	void bindToTextureUnit(GLuint unit, GLenum target) {
+		glActiveTexture(GL_TEXTURE0 + unit);
+		popErrors("glActiveTexture");
+
 		glBindTexture(target, id());
 		popErrors("glBindTexture");
 		_bindTarget = target;
@@ -66,11 +69,6 @@ public:
 
 	GLenum boundTarget() const {
 		return _bindTarget;
-	}
-
-	static void activateTextureUnit(int unit) {
-		glActiveTexture(GL_TEXTURE0 + unit);
-		popErrors("glActiveTexture");
 	}
 
 	static void setParameteri(GLenum target, GLenum name, GLint param) {

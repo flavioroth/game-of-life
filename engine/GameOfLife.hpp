@@ -6,6 +6,10 @@
 
 #include "CellMatrix.hpp"
 
+#include <condition_variable>
+#include <list>
+#include <thread>
+
 namespace engine {
 
 class GameOfLife {
@@ -30,7 +34,7 @@ public:
 
 				if(cellValue == 1 && (neighbors > 3 || neighbors < 2)) {
 					next.at(x, y) = 0;
-				} else if (cellValue == 0 && neighbors == 3) {
+				} else if(cellValue == 0 && neighbors == 3) {
 					next.at(x, y) = 1;
 				} else {
 					next.at(x, y) = cellValue;
@@ -38,7 +42,6 @@ public:
 			}
 		}
 	}
-
 };
 
-}
+}// namespace engine

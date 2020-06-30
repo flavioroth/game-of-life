@@ -21,6 +21,14 @@ public:
 	Shader(GLenum type)
 		: GLResource(glCreateShader(type)) {}
 
+	Shader(GLenum type, const std::vector<std::string>& sources)
+			: Shader(type) {
+		setSources(sources);
+	}
+
+	Shader(GLenum type, const std::string& source)
+			: Shader(type, std::vector<std::string>{source}) {
+	}
 
 	template <typename ...Args>
 	static Ptr make(Args&& ...args) {

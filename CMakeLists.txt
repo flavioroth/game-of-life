@@ -53,9 +53,12 @@ set(SRCS
 	engine/Texture.hpp
 	engine/Size.hpp
 	engine/CellMatrix.hpp
-	engine/DoubleBuffer.hpp
+	engine/Swappable.hpp
 	engine/GameOfLife.hpp
 	engine/CellMatrixRenderer.hpp
+	engine/Events.hpp
+	engine/EventQueue.hpp
+	engine/Camera.hpp
 	utils/RollingAverage.hpp
 	utils/FrequencyAverage.hpp
 	utils/RollingBuffer.hpp
